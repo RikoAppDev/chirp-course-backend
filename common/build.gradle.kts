@@ -1,7 +1,6 @@
 plugins {
     id("java-library")
     id("chirp.kotlin-common")
-    id("org.springframework.boot")
 }
 
 group = "dev.rikoapp.common"
@@ -18,7 +17,4 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(21)
 }

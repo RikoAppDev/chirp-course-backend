@@ -8,6 +8,7 @@ plugins {
 
 group = "dev.rikoapp"
 version = "0.0.1-SNAPSHOT"
+description = "Chirp Course Backend"
 
 subprojects {
     group = rootProject.group

@@ -1,12 +1,11 @@
 plugins {
     id("chirp.kotlin-common")
-    id("org.springframework.boot")
     id("io.spring.dependency-management")
 }
 
 dependencies {
-    "implementation"(libraries.findLibrary("koltin-reflect").get())
-    "implementation"(libraries.findLibrary("koltin-stdlib").get())
+    "implementation"(libraries.findLibrary("kotlin-reflect").get())
+    "implementation"(libraries.findLibrary("kotlin-stdlib").get())
     "implementation"(libraries.findLibrary("spring-boot-starter-web").get())
 
     "testImplementation"(libraries.findLibrary("spring-boot-starter-test").get())
