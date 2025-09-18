@@ -3,7 +3,6 @@ spring:
     name: ChirpCourse
 
   datasource:
-
     url: jdbc:postgresql://aws-1-eu-central-1.pooler.supabase.com:5432/postgres
     username: postgres.rqntopjnbvztwbucdosn
     password: ${POSTGRES_PASSWORD}
@@ -31,3 +30,6 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
         show_sql: true
+
+jwt:
+  secret: ${JWT_SECRET_BASE64}

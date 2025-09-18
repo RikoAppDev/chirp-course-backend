@@ -1,5 +1,6 @@
 package dev.rikoapp.chirpcourse.api.exception_handling
 
+import dev.rikoapp.chirpcourse.domain.exception.InvalidTokenException
 import dev.rikoapp.chirpcourse.domain.exception.UserAlreadyExistException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,6 +18,15 @@ class AuthExceptionHandler {
         e: UserAlreadyExistException
     ) = mapOf(
         "code" to "USER_ALREADY_EXISTS",
+        "message" to e.message
+    )
+
+    @ExceptionHandler(InvalidTokenException::class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    fun onInvalidToken(
+        e: InvalidTokenException
+    ) = mapOf(
+        "code" to "INVALID_TOKEN",
         "message" to e.message
     )
 
