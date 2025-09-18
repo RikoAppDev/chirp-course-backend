@@ -1,7 +1,10 @@
 package dev.rikoapp.chirpcourse.api.controllers
 
+import dev.rikoapp.chirpcourse.api.dto.AuthenticatedUserDto
+import dev.rikoapp.chirpcourse.api.dto.LoginRequest
 import dev.rikoapp.chirpcourse.api.dto.RegisterRequest
 import dev.rikoapp.chirpcourse.api.dto.UserDto
+import dev.rikoapp.chirpcourse.api.mappers.toAuthenticatedUserDto
 import dev.rikoapp.chirpcourse.api.mappers.toUserDto
 import dev.rikoapp.chirpcourse.service.auth.AuthService
 import jakarta.validation.Valid
@@ -23,5 +26,15 @@ class AuthController(private val authService: AuthService) {
             username = body.username,
             password = body.password
         ).toUserDto()
+    }
+
+    @PostMapping("/login")
+    fun login(
+        @Valid @RequestBody body: LoginRequest
+    ): AuthenticatedUserDto {
+        return authService.login(
+            email = body.email,
+            password = body.password
+        ).toAuthenticatedUserDto()
     }
 }
