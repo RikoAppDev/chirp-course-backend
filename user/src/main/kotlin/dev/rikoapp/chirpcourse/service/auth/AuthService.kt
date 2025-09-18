@@ -1,5 +1,6 @@
 package dev.rikoapp.chirpcourse.service.auth
 
+import dev.rikoapp.chirpcourse.domain.exception.EmailNotVerifiedException
 import dev.rikoapp.chirpcourse.domain.exception.InvalidCredentialsException
 import dev.rikoapp.chirpcourse.domain.exception.InvalidTokenException
 import dev.rikoapp.chirpcourse.domain.exception.UserAlreadyExistException
@@ -25,25 +26,30 @@ class AuthService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val jwtService: JwtService,
-    private val refreshTokenRepository: RefreshTokenRepository
+    private val refreshTokenRepository: RefreshTokenRepository,
+    private val emailVerificationService: EmailVerificationService
 ) {
+    @Transactional
     fun register(email: String, username: String, password: String): User {
+        val trimmedEmail = email.trim()
+
         val user = userRepository.findByEmailOrUsername(
-            email.trim(),
+            trimmedEmail,
             username.trim()
         )
-
         if (user != null) {
             throw UserAlreadyExistException()
         }
 
-        val savedUser = userRepository.save(
+        val savedUser = userRepository.saveAndFlush(
             UserEntity(
-                email = email.trim(),
+                email = trimmedEmail,
                 username = username.trim(),
                 hashedPassword = passwordEncoder.encode(password)!!
             )
         ).toUser()
+
+        val token = emailVerificationService.createVerificationToken(trimmedEmail)
 
         return savedUser
     }
@@ -59,7 +65,9 @@ class AuthService(
             throw InvalidCredentialsException()
         }
 
-        // TODO: Check for verified email
+        if (!user.hasVerifiedEmail) {
+            throw EmailNotVerifiedException()
+        }
 
         return user.id?.let { userId ->
             val accessToken = jwtService.generateAccessToken(userId)
