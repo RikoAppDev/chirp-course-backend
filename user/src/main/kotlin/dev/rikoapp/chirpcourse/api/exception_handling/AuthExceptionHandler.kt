@@ -3,6 +3,7 @@ package dev.rikoapp.chirpcourse.api.exception_handling
 import dev.rikoapp.chirpcourse.domain.exception.EmailNotVerifiedException
 import dev.rikoapp.chirpcourse.domain.exception.InvalidCredentialsException
 import dev.rikoapp.chirpcourse.domain.exception.InvalidTokenException
+import dev.rikoapp.chirpcourse.domain.exception.SamePasswordException
 import dev.rikoapp.chirpcourse.domain.exception.UserAlreadyExistException
 import dev.rikoapp.chirpcourse.domain.exception.UserNotFoundException
 import org.springframework.http.HttpStatus
@@ -57,6 +58,15 @@ class AuthExceptionHandler {
         e: EmailNotVerifiedException
     ) = mapOf(
         "code" to "EMAIL_NOT_VERIFIED",
+        "message" to e.message
+    )
+
+    @ExceptionHandler(SamePasswordException::class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    fun onSamePassword(
+        e: SamePasswordException
+    ) = mapOf(
+        "code" to "SAME_PASSWORD",
         "message" to e.message
     )
 

@@ -1,4 +1,4 @@
-package dev.rikoapp.chirpcourse.service.auth
+package dev.rikoapp.chirpcourse.service
 
 import dev.rikoapp.chirpcourse.domain.exception.EmailNotVerifiedException
 import dev.rikoapp.chirpcourse.domain.exception.InvalidCredentialsException

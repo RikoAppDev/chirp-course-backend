@@ -1,4 +1,4 @@
-package dev.rikoapp.chirpcourse.service.auth
+package dev.rikoapp.chirpcourse.service
 
 import dev.rikoapp.chirpcourse.domain.exception.InvalidTokenException
 import dev.rikoapp.chirpcourse.domain.model.UserId
