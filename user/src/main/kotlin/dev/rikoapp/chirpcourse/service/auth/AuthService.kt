@@ -1,6 +1,7 @@
 package dev.rikoapp.chirpcourse.service.auth
 
 import dev.rikoapp.chirpcourse.domain.exception.InvalidCredentialsException
+import dev.rikoapp.chirpcourse.domain.exception.InvalidTokenException
 import dev.rikoapp.chirpcourse.domain.exception.UserAlreadyExistException
 import dev.rikoapp.chirpcourse.domain.exception.UserNotFoundException
 import dev.rikoapp.chirpcourse.domain.model.AuthenticatedUser
@@ -12,7 +13,9 @@ import dev.rikoapp.chirpcourse.infra.database.mappers.toUser
 import dev.rikoapp.chirpcourse.infra.database.repositories.RefreshTokenRepository
 import dev.rikoapp.chirpcourse.infra.database.repositories.UserRepository
 import dev.rikoapp.chirpcourse.infra.security.PasswordEncoder
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.security.MessageDigest
 import java.time.Instant
 import kotlin.io.encoding.Base64
@@ -67,6 +70,44 @@ class AuthService(
                 user = user.toUser(),
                 accessToken = accessToken,
                 refreshToken = refreshToken
+            )
+        } ?: throw UserNotFoundException()
+    }
+
+    @Transactional
+    fun refresh(refreshToken: String): AuthenticatedUser {
+        if (!jwtService.validateRefreshToken(refreshToken)) {
+            throw InvalidTokenException(
+                message = "The attached refresh token is not valid"
+            )
+        }
+
+        val userId = jwtService.getUserIdFromToken(refreshToken)
+        val user = userRepository.findByIdOrNull(userId) ?: throw UserNotFoundException()
+
+        val hashedToken = hashToken(refreshToken)
+        return user.id?.let { userId ->
+            refreshTokenRepository.findByUserIdAndHashedToken(
+                userId = userId,
+                hashedToken = hashedToken
+            ) ?: throw InvalidTokenException(
+                message = "The attached refresh token is not valid"
+            )
+
+            refreshTokenRepository.deleteByUserIdAndHashedToken(
+                userId = userId,
+                hashedToken = hashedToken
+            )
+
+            val newAccessToken = jwtService.generateAccessToken(userId)
+            val newRefreshToken = jwtService.generateRefreshToken(userId)
+
+            storeRefreshToken(userId, newRefreshToken)
+
+            AuthenticatedUser(
+                user = user.toUser(),
+                accessToken = newAccessToken,
+                refreshToken = newRefreshToken
             )
         } ?: throw UserNotFoundException()
     }

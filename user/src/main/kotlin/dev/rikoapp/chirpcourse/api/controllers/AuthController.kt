@@ -2,6 +2,7 @@ package dev.rikoapp.chirpcourse.api.controllers
 
 import dev.rikoapp.chirpcourse.api.dto.AuthenticatedUserDto
 import dev.rikoapp.chirpcourse.api.dto.LoginRequest
+import dev.rikoapp.chirpcourse.api.dto.RefreshRequest
 import dev.rikoapp.chirpcourse.api.dto.RegisterRequest
 import dev.rikoapp.chirpcourse.api.dto.UserDto
 import dev.rikoapp.chirpcourse.api.mappers.toAuthenticatedUserDto
@@ -35,6 +36,15 @@ class AuthController(private val authService: AuthService) {
         return authService.login(
             email = body.email,
             password = body.password
+        ).toAuthenticatedUserDto()
+    }
+
+    @PostMapping("/refresh")
+    fun refresh(
+        @RequestBody body: RefreshRequest
+    ): AuthenticatedUserDto {
+        return authService.refresh(
+            body.refreshToken
         ).toAuthenticatedUserDto()
     }
 }
