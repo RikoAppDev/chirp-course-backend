@@ -3,6 +3,7 @@ package dev.rikoapp.chirpcourse.api.exception_handling
 import dev.rikoapp.chirpcourse.domain.exception.EmailNotVerifiedException
 import dev.rikoapp.chirpcourse.domain.exception.InvalidCredentialsException
 import dev.rikoapp.chirpcourse.domain.exception.InvalidTokenException
+import dev.rikoapp.chirpcourse.domain.exception.RateLimitException
 import dev.rikoapp.chirpcourse.domain.exception.SamePasswordException
 import dev.rikoapp.chirpcourse.domain.exception.UserAlreadyExistException
 import dev.rikoapp.chirpcourse.domain.exception.UserNotFoundException
@@ -67,6 +68,15 @@ class AuthExceptionHandler {
         e: SamePasswordException
     ) = mapOf(
         "code" to "SAME_PASSWORD",
+        "message" to e.message
+    )
+
+    @ExceptionHandler(RateLimitException::class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    fun onRateLimitExceeded(
+        e: RateLimitException
+    ) = mapOf(
+        "code" to "RATE_LIMIT_EXCEEDED",
         "message" to e.message
     )
 

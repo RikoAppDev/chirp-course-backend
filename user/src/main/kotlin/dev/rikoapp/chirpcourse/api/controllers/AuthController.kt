@@ -10,6 +10,7 @@ import dev.rikoapp.chirpcourse.api.dto.ResetPasswordRequest
 import dev.rikoapp.chirpcourse.api.dto.UserDto
 import dev.rikoapp.chirpcourse.api.mappers.toAuthenticatedUserDto
 import dev.rikoapp.chirpcourse.api.mappers.toUserDto
+import dev.rikoapp.chirpcourse.infra.rate_limiting.EmailRateLimiter
 import dev.rikoapp.chirpcourse.service.AuthService
 import dev.rikoapp.chirpcourse.service.EmailVerificationService
 import dev.rikoapp.chirpcourse.service.PasswordResetService
@@ -26,7 +27,8 @@ import org.springframework.web.bind.annotation.RestController
 class AuthController(
     private val authService: AuthService,
     private val emailVerificationService: EmailVerificationService,
-    private val passwordResetService: PasswordResetService
+    private val passwordResetService: PasswordResetService,
+    private val emailRateLimiter: EmailRateLimiter
 ) {
 
     @PostMapping("/register")
@@ -57,6 +59,17 @@ class AuthController(
         return authService.refresh(
             body.refreshToken
         ).toAuthenticatedUserDto()
+    }
+
+    @PostMapping("/resend-verification")
+    fun resendVerification(
+        @Valid @RequestBody body: EmailRequest
+    ) {
+        emailRateLimiter.withRateLimit(
+            email = body.email
+        ) {
+            emailVerificationService.resendVerificationEmail(body.email)
+        }
     }
 
     @GetMapping("/verify")
