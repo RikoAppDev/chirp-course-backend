@@ -49,3 +49,10 @@ chirp:
       expiry-hours: 24
     reset-password:
       expiry-minutes: 30
+
+nginx:
+  trusted-ips:
+    - "127.0.0.1" # nginx running on the same server
+    - "::1"       # localhost IPv6
+    - "172.17.0.0/16" # nginx container in docker
+    - "10.0.0.5/32" # nginx server IP (if separate server)
