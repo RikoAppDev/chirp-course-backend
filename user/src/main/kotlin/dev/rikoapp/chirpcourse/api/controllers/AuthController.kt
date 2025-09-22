@@ -79,6 +79,13 @@ class AuthController(
         ).toAuthenticatedUserDto()
     }
 
+    @PostMapping("/logout")
+    fun logout(
+        @RequestBody body: RefreshRequest
+    ) {
+        authService.logout(body.refreshToken)
+    }
+
     @PostMapping("/resend-verification")
     @IpRateLimit(
         requests = 10,
