@@ -45,7 +45,7 @@ class IpResolver(
             IpAddressMatcher(cidr)
         }
 
-    fun getClintIp(request: HttpServletRequest): String {
+    fun getClientIp(request: HttpServletRequest): String {
         val remoteAddr = request.remoteAddr
 
         if (!isFromTrustedProxy(remoteAddr)) {
