@@ -5,6 +5,7 @@ import dev.rikoapp.chirpcourse.domain.exception.InvalidCredentialsException
 import dev.rikoapp.chirpcourse.domain.exception.InvalidTokenException
 import dev.rikoapp.chirpcourse.domain.exception.RateLimitException
 import dev.rikoapp.chirpcourse.domain.exception.SamePasswordException
+import dev.rikoapp.chirpcourse.domain.exception.UnauthorizedException
 import dev.rikoapp.chirpcourse.domain.exception.UserAlreadyExistException
 import dev.rikoapp.chirpcourse.domain.exception.UserNotFoundException
 import org.springframework.http.HttpStatus
@@ -59,6 +60,15 @@ class AuthExceptionHandler {
         e: EmailNotVerifiedException
     ) = mapOf(
         "code" to "EMAIL_NOT_VERIFIED",
+        "message" to e.message
+    )
+
+    @ExceptionHandler(UnauthorizedException::class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    fun onUnauthorized(
+        e: UnauthorizedException
+    ) = mapOf(
+        "code" to "UNAUTHORIZED",
         "message" to e.message
     )
 

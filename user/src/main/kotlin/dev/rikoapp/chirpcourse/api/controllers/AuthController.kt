@@ -11,6 +11,7 @@ import dev.rikoapp.chirpcourse.api.dto.ResetPasswordRequest
 import dev.rikoapp.chirpcourse.api.dto.UserDto
 import dev.rikoapp.chirpcourse.api.mappers.toAuthenticatedUserDto
 import dev.rikoapp.chirpcourse.api.mappers.toUserDto
+import dev.rikoapp.chirpcourse.api.util.requestUserId
 import dev.rikoapp.chirpcourse.infra.rate_limiting.EmailRateLimiter
 import dev.rikoapp.chirpcourse.service.AuthService
 import dev.rikoapp.chirpcourse.service.EmailVerificationService
@@ -127,6 +128,10 @@ class AuthController(
     fun changePassword(
         @Valid @RequestBody body: ChangePasswordRequest
     ) {
-        // TODO: Extract user ID from security context
+        passwordResetService.changePassword(
+            userId = requestUserId,
+            oldPassword = body.oldPassword,
+            newPassword = body.newPassword
+        )
     }
 }
